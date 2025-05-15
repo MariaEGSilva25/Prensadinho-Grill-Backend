@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -27,7 +28,8 @@ public class ProductService {
                 product.getQuantity(),product.getMinimumStock(),product.getMaximumStock());
     }
     public ProductDTO findByProductCode(Long productCode){
-        Product product = repository.findByProductCode(productCode);
+        Optional<Product> optionalProduct = repository.findByProductCode(productCode);
+        Product product = optionalProduct.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + productCode));
         return new ProductDTO(product.getProductCode(),product.getName(),product.getUnitPrice(),
                 product.getQuantity(),product.getMinimumStock(),product.getMaximumStock());
     }
@@ -53,7 +55,8 @@ public class ProductService {
         if (dto.minimumStock() > dto.maximumStock()) {
             throw new IllegalArgumentException("O estoque máximo deve ser maior ou igual ao mínimo.");
         }
-        Product p = repository.findByProductCode(dto.productCode());
+        Optional<Product> optionalProduct = repository.findByProductCode(dto.productCode());
+        Product p = optionalProduct.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: "));
         p.setProductCode(dto.productCode());
         p.setName(dto.name());
         p.setUnitPrice(dto.unitPrice());
@@ -69,7 +72,8 @@ public class ProductService {
     }
     @Transactional
     public void deleteProductCode(Long productCode){
-        Product p = repository.findByProductCode(productCode);
-        repository.delete(p);
+        Optional<Product> optionalProduct = repository.findByProductCode(productCode);
+        Product product = optionalProduct.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + productCode));
+        repository.delete(product);
     }
 }
