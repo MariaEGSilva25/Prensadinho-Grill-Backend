@@ -3,7 +3,6 @@ package com.unasp.Prensadinho.controller;
 import com.unasp.Prensadinho.DTO.productDTO.ProductDTO;
 import com.unasp.Prensadinho.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,7 +16,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-
 
     @GetMapping
     public ResponseEntity<List<ProductDTO>> findAll(){
@@ -51,7 +49,7 @@ public class ProductController {
     }
     @DeleteMapping("/{productCode}")
     public ResponseEntity<Void> deleteProductCode(@PathVariable Long productCode){
-        productService.delete(productCode);
+        productService.deleteProductCode(productCode);
         return ResponseEntity.noContent().build();
     }
 }
