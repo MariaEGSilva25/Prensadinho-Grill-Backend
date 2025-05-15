@@ -1,4 +1,4 @@
-package com.unasp.Prensadinho.ENUM;
+package com.unasp.Prensadinho.domain.ENUM;
 
 public enum PaymentType {
     DEBIT(1),
