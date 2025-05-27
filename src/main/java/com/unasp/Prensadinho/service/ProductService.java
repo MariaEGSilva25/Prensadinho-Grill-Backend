@@ -76,4 +76,11 @@ public class ProductService {
         Product product = optionalProduct.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + productCode));
         repository.delete(product);
     }
+
+    @Transactional
+    public void deleteAllProducts(){
+        List<Product> optionalProduct = repository.findAll();
+        repository.deleteAll();
+    }
+
 }

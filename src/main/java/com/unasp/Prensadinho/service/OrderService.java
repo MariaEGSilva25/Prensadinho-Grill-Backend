@@ -37,12 +37,13 @@ public class OrderService {
 
     @Transactional
     public void createOrder(OrderDTO orderDTO) {
-        Spun spun = spunRepository.findById(orderDTO.spun().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Spun não encontrado"));
+        Spun spun = new Spun();
+        spun.setPhone(orderDTO.spun().getPhone());
+        spun.setName(orderDTO.spun().getName());
 
         Order ord = new Order();
         ord.setPaymentType(orderDTO.type());
-        ord.setSpun(spun); // usa o spun carregado do banco, não o do DTO
+        ord.setSpun(spun);
 
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal totalValue = BigDecimal.ZERO;
@@ -55,7 +56,6 @@ public class OrderService {
                 throw new IllegalArgumentException("Quantidade insuficiente no estoque para o produto: " + product.getName());
             }
 
-            // Atualiza estoque
             product.setQuantity(product.getQuantity() - itemDTO.quantity());
             productRepository.save(product);
 
@@ -72,13 +72,9 @@ public class OrderService {
         ord.setItems(orderItems);
         ord.setValue(totalValue);
 
-        // Adiciona a order na lista do spun
         spun.getOrders().add(ord);
 
-        // Salva a order
         repository.save(ord);
-
-        // Atualiza o spun com a nova order
         spunRepository.save(spun);
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,7 +25,7 @@ public class Spun {
 
     @OneToMany(mappedBy = "spun")
     @JsonManagedReference
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 
     public Spun(){
     }
