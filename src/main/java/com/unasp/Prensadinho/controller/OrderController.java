@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -35,11 +33,11 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Void> updateOrder(@PathVariable Long id ,@RequestBody OrderDTO order){
-//        service.updateOrder(id, order);
-//        return ResponseEntity.noContent().build();
-//    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateOrder(@PathVariable Long id, @RequestBody OrderDTO order) {
+        service.updateOrder(id, order);
+        return ResponseEntity.noContent().build();
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id){
         service.deleteOrder(id);

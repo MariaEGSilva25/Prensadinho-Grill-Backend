@@ -2,6 +2,8 @@ package com.unasp.Prensadinho.service;
 
 import com.unasp.Prensadinho.DTO.productDTO.ProductDTO;
 import com.unasp.Prensadinho.domain.Product;
+import com.unasp.Prensadinho.exceptions.InvalidStockRangeException;
+import com.unasp.Prensadinho.exceptions.NotFoundException;
 import com.unasp.Prensadinho.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +25,20 @@ public class ProductService {
     }
 
     public ProductDTO findById(Long id){
-        Product product = repository.findById(id).orElseThrow();
+        Product product = repository.findById(id).orElseThrow(NotFoundException::new);
         return new ProductDTO(product.getProductCode(),product.getName(),product.getUnitPrice(),
                 product.getQuantity(),product.getMinimumStock(),product.getMaximumStock());
     }
     public ProductDTO findByProductCode(Long productCode){
         Optional<Product> optionalProduct = repository.findByProductCode(productCode);
-        Product product = optionalProduct.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + productCode));
+        Product product = optionalProduct.orElseThrow(NotFoundException::new);
         return new ProductDTO(product.getProductCode(),product.getName(),product.getUnitPrice(),
                 product.getQuantity(),product.getMinimumStock(),product.getMaximumStock());
     }
     @Transactional
     public void createProduct(ProductDTO productDTO){
         if (productDTO.minimumStock() > productDTO.maximumStock()) {
-            throw new IllegalArgumentException("O estoque máximo deve ser maior ou igual ao mínimo.");
+            throw new InvalidStockRangeException("O estoque máximo deve ser maior ou igual ao mínimo.");
         }
 
         Product product = new Product();
@@ -53,10 +55,10 @@ public class ProductService {
     @Transactional
     public void updateProduct(ProductDTO dto){
         if (dto.minimumStock() > dto.maximumStock()) {
-            throw new IllegalArgumentException("O estoque máximo deve ser maior ou igual ao mínimo.");
+            throw new InvalidStockRangeException("O estoque máximo deve ser maior ou igual ao mínimo.");
         }
         Optional<Product> optionalProduct = repository.findByProductCode(dto.productCode());
-        Product p = optionalProduct.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: "));
+        Product p = optionalProduct.orElseThrow(NotFoundException::new);
         p.setProductCode(dto.productCode());
         p.setName(dto.name());
         p.setUnitPrice(dto.unitPrice());
@@ -73,7 +75,7 @@ public class ProductService {
     @Transactional
     public void deleteProductCode(Long productCode){
         Optional<Product> optionalProduct = repository.findByProductCode(productCode);
-        Product product = optionalProduct.orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + productCode));
+        Product product = optionalProduct.orElseThrow(NotFoundException::new);
         repository.delete(product);
     }
 

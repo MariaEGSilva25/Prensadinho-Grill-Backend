@@ -55,7 +55,7 @@ public class ProductController {
 
     @DeleteMapping("/delete-all")
     public ResponseEntity<String> deleteAllProducts() {
-        productService.deleteAllProducts(); // correto: chama o service
+        productService.deleteAllProducts();
         return ResponseEntity.ok("Todos os produtos foram deletados com sucesso.");
     }
 }
