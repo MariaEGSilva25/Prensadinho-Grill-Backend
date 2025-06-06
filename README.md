@@ -16,7 +16,7 @@
 
 - Java 
 - Docker
-- 
+
 ---
 
 # Instalação
