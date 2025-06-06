@@ -6,6 +6,7 @@ import com.unasp.Prensadinho.domain.Order;
 import com.unasp.Prensadinho.domain.OrderItem;
 import com.unasp.Prensadinho.domain.Product;
 import com.unasp.Prensadinho.domain.Spun;
+import com.unasp.Prensadinho.exceptions.NotFoundException;
 import com.unasp.Prensadinho.repository.OrderRepository;
 import com.unasp.Prensadinho.repository.ProductRepository;
 import com.unasp.Prensadinho.repository.SpunRepository;
@@ -32,7 +33,7 @@ public class OrderService {
     }
 
     public Order findById(Long id){
-        return repository.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     @Transactional
@@ -50,11 +51,8 @@ public class OrderService {
 
         for (OrderItemDTO itemDTO : orderDTO.items()) {
             Product product = productRepository.findByProductCode(itemDTO.productCode())
-                    .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + itemDTO.productCode()));
+                    .orElseThrow(NotFoundException::new);
 
-            if (product.getQuantity() < itemDTO.quantity()) {
-                throw new IllegalArgumentException("Quantidade insuficiente no estoque para o produto: " + product.getName());
-            }
 
             product.setQuantity(product.getQuantity() - itemDTO.quantity());
             productRepository.save(product);
@@ -78,32 +76,54 @@ public class OrderService {
         spunRepository.save(spun);
     }
 
-//
-//    @Transactional
-//    public void updateOrder(Long id, OrderDTO order){
-//        Order ord = new Order();
-//        List<Product> products = productRepository.findByProductCodeIn(order.productsCode());
-//        ord.setProducts(products);
-//        ord.setPaymentType(order.type());
-//        ord.setValue(calcTotalValue(products));
-//        ord.setSpun(order.spun());
-//
-//        repository.save(ord);
-//    }
+    @Transactional
+    public void updateOrder(Long orderId, OrderDTO orderDTO) {
+        Order existingOrder = repository.findById(orderId)
+                .orElseThrow(NotFoundException::new);
+
+        Spun spun = existingOrder.getSpun();
+        spun.setPhone(orderDTO.spun().getPhone());
+        spun.setName(orderDTO.spun().getName());
+
+        for (OrderItem oldItem : existingOrder.getItems()) {
+            Product product = oldItem.getProduct();
+            product.setQuantity(product.getQuantity() + oldItem.getQuantity());
+            productRepository.save(product);
+        }
+
+        existingOrder.getItems().clear();
+
+        List<OrderItem> updatedItems = new ArrayList<>();
+        BigDecimal updatedTotal = BigDecimal.ZERO;
+
+        for (OrderItemDTO itemDTO : orderDTO.items()) {
+            Product product = productRepository.findByProductCode(itemDTO.productCode())
+                    .orElseThrow(NotFoundException::new);
+
+
+            product.setQuantity(product.getQuantity() - itemDTO.quantity());
+            productRepository.save(product);
+
+            OrderItem newItem = new OrderItem();
+            newItem.setProduct(product);
+            newItem.setQuantity(itemDTO.quantity());
+            newItem.setOrder(existingOrder);
+
+            updatedItems.add(newItem);
+
+            updatedTotal = updatedTotal.add(product.getUnitPrice().multiply(BigDecimal.valueOf(itemDTO.quantity())));
+        }
+
+        existingOrder.setItems(updatedItems);
+        existingOrder.setValue(updatedTotal);
+        existingOrder.setPaymentType(orderDTO.type());
+
+        repository.save(existingOrder);
+        spunRepository.save(spun);
+    }
 
     @Transactional
     public void deleteOrder(Long id){
         repository.deleteById(id);
     }
-
-
-    public BigDecimal calcTotalValue(List<Product> products) {
-        BigDecimal total = BigDecimal.ZERO;
-        for (Product product : products) {
-            BigDecimal itemTotal = product.getUnitPrice().multiply(BigDecimal.valueOf(product.getQuantity()));
-            total = total.add(itemTotal);
-        }
-        return total;
-    }
-
 }

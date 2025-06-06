@@ -35,24 +35,13 @@ public class Product {
     @NotNull
     private int quantity;
 
-    @Column(nullable = false)
-    @PositiveOrZero
-    @NotNull
-    private int minimumStock;
-
-    @Column(nullable = false)
-    @PositiveOrZero
-    @NotNull
-    private int maximumStock;
 
     public Product(){}
-    public Product(Long productCode, String name, BigDecimal unitPrice, int quantity, int minimumStock, int maximumStock) {
+    public Product(Long productCode, String name, BigDecimal unitPrice, int quantity) {
         this.productCode = productCode;
         this.name = name;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
-        this.minimumStock = minimumStock;
-        this.maximumStock = maximumStock;
     }
 
     public Long getId() {
@@ -95,25 +84,5 @@ public class Product {
 
     public void setQuantity(@PositiveOrZero @NotNull int quantity) {
         this.quantity = quantity;
-    }
-
-    @PositiveOrZero
-    @NotNull
-    public int getMinimumStock() {
-        return minimumStock;
-    }
-
-    public void setMinimumStock(@PositiveOrZero @NotNull int minimumStock) {
-        this.minimumStock = minimumStock;
-    }
-
-    @PositiveOrZero
-    @NotNull
-    public int getMaximumStock() {
-        return maximumStock;
-    }
-
-    public void setMaximumStock(@PositiveOrZero @NotNull int maximumStock) {
-        this.maximumStock = maximumStock;
     }
 }

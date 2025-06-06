@@ -2,6 +2,7 @@ package com.unasp.Prensadinho.service;
 
 import com.unasp.Prensadinho.DTO.spunDTO.SpunDTO;
 import com.unasp.Prensadinho.domain.Spun;
+import com.unasp.Prensadinho.exceptions.NotFoundException;
 import com.unasp.Prensadinho.repository.SpunRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class SpunService {
         return repository.findAll();
     }
     public Spun findById(Long id){
-        Spun spun = repository.findById(id).orElseThrow();
-        spun.getOrders().size(); // força o carregamento das vendas (orders)
+        Spun spun = repository.findById(id).orElseThrow(NotFoundException::new);
+
         return spun;
     }
 
