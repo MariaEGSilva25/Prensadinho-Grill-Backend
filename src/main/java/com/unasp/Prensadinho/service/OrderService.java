@@ -50,7 +50,7 @@ public class OrderService {
         BigDecimal totalValue = BigDecimal.ZERO;
 
         for (OrderItemDTO itemDTO : orderDTO.items()) {
-            Product product = productRepository.findByProductCode(itemDTO.productCode())
+            Product product = productRepository.findFirstByProductCodeOrderByCreatedAtDesc(itemDTO.productCode())
                     .orElseThrow(NotFoundException::new);
 
 
@@ -97,7 +97,7 @@ public class OrderService {
         BigDecimal updatedTotal = BigDecimal.ZERO;
 
         for (OrderItemDTO itemDTO : orderDTO.items()) {
-            Product product = productRepository.findByProductCode(itemDTO.productCode())
+            Product product = productRepository.findFirstByProductCodeOrderByCreatedAtDesc(itemDTO.productCode())
                     .orElseThrow(NotFoundException::new);
 
 

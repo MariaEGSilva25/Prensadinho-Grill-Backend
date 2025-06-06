@@ -29,7 +29,7 @@ public class ProductService {
                 product.getQuantity());
     }
     public ProductDTO findByProductCode(Long productCode){
-        Optional<Product> optionalProduct = repository.findByProductCode(productCode);
+        Optional<Product> optionalProduct = repository.findFirstByProductCodeOrderByCreatedAtDesc(productCode);
         Product product = optionalProduct.orElseThrow(NotFoundException::new);
         return new ProductDTO(product.getProductCode(),product.getName(),product.getUnitPrice(),
                 product.getQuantity());
@@ -48,7 +48,7 @@ public class ProductService {
     }
     @Transactional
     public void updateProduct(ProductDTO dto){
-        Optional<Product> optionalProduct = repository.findByProductCode(dto.productCode());
+        Optional<Product> optionalProduct = repository.findFirstByProductCodeOrderByCreatedAtDesc(dto.productCode());
         Product p = optionalProduct.orElseThrow(NotFoundException::new);
         p.setProductCode(dto.productCode());
         p.setName(dto.name());
@@ -63,7 +63,7 @@ public class ProductService {
     }
     @Transactional
     public void deleteProductCode(Long productCode){
-        Optional<Product> optionalProduct = repository.findByProductCode(productCode);
+        Optional<Product> optionalProduct = repository.findFirstByProductCodeOrderByCreatedAtDesc(productCode);
         Product product = optionalProduct.orElseThrow(NotFoundException::new);
         repository.delete(product);
     }

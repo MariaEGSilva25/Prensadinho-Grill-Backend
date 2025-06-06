@@ -7,6 +7,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_product")
@@ -16,7 +17,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotNull
     private Long productCode;
 
@@ -35,13 +36,16 @@ public class Product {
     @NotNull
     private int quantity;
 
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public Product(){}
-    public Product(Long productCode, String name, BigDecimal unitPrice, int quantity) {
+    public Product(Long productCode, String name, BigDecimal unitPrice, int quantity, LocalDateTime createdAt) {
         this.productCode = productCode;
         this.name = name;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
+        this.createdAt = createdAt;
+
     }
 
     public Long getId() {
@@ -84,5 +88,13 @@ public class Product {
 
     public void setQuantity(@PositiveOrZero @NotNull int quantity) {
         this.quantity = quantity;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
