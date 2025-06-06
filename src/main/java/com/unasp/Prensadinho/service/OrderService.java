@@ -6,7 +6,6 @@ import com.unasp.Prensadinho.domain.Order;
 import com.unasp.Prensadinho.domain.OrderItem;
 import com.unasp.Prensadinho.domain.Product;
 import com.unasp.Prensadinho.domain.Spun;
-import com.unasp.Prensadinho.exceptions.InvalidStockRangeException;
 import com.unasp.Prensadinho.exceptions.NotFoundException;
 import com.unasp.Prensadinho.repository.OrderRepository;
 import com.unasp.Prensadinho.repository.ProductRepository;
@@ -54,9 +53,6 @@ public class OrderService {
             Product product = productRepository.findByProductCode(itemDTO.productCode())
                     .orElseThrow(NotFoundException::new);
 
-            if (product.getQuantity() < itemDTO.quantity()) {
-                throw new InvalidStockRangeException("Quantidade insuficiente no estoque para o produto: " + product.getName());
-            }
 
             product.setQuantity(product.getQuantity() - itemDTO.quantity());
             productRepository.save(product);
@@ -104,9 +100,6 @@ public class OrderService {
             Product product = productRepository.findByProductCode(itemDTO.productCode())
                     .orElseThrow(NotFoundException::new);
 
-            if (product.getQuantity() < itemDTO.quantity()) {
-                throw new InvalidStockRangeException("Quantidade insuficiente no estoque para o produto: " + product.getName());
-            }
 
             product.setQuantity(product.getQuantity() - itemDTO.quantity());
             productRepository.save(product);

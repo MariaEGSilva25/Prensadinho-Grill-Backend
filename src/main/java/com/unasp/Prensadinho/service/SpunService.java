@@ -21,7 +21,7 @@ public class SpunService {
     }
     public Spun findById(Long id){
         Spun spun = repository.findById(id).orElseThrow(NotFoundException::new);
-        spun.getOrders().size();
+
         return spun;
     }
 

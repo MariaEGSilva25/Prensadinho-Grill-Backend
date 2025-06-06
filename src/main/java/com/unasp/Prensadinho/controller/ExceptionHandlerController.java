@@ -1,7 +1,6 @@
 package com.unasp.Prensadinho.controller;
 
 import com.unasp.Prensadinho.exceptions.ErrorMessage;
-import com.unasp.Prensadinho.exceptions.InvalidStockRangeException;
 import com.unasp.Prensadinho.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +15,5 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     private ResponseEntity<ErrorMessage> notFoundException(NotFoundException exception){
         ErrorMessage errorMsg = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMsg);
-    }
-    @ExceptionHandler(InvalidStockRangeException.class)
-    public ResponseEntity<String> handleInvalidStockRange(InvalidStockRangeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
